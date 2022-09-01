@@ -13,7 +13,7 @@ type jwtCustomClaims struct {
 	jwt.StandardClaims
 }
 
-var secret = []byte("secret")
+var Secret = []byte("secret")
 
 func createTokenJWT(name, email string) (string, error) {
 	claims := &jwtCustomClaims{
@@ -28,7 +28,7 @@ func createTokenJWT(name, email string) (string, error) {
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 
 	// Generate encoded token and send it as response.
-	t, err := token.SignedString(secret)
+	t, err := token.SignedString(Secret)
 	if err != nil {
 		log.Println("Error: ", err)
 	}
