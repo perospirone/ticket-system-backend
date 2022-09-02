@@ -8,14 +8,6 @@ import (
 	"ticket-system/database"
 )
 
-type responseToken struct {
-	Token string `json:"token"`
-}
-
-type responseError struct {
-	Error string `json:"error"`
-}
-
 var db = database.Connection()
 
 func Register(w http.ResponseWriter, r *http.Request) {
@@ -26,6 +18,7 @@ func Register(w http.ResponseWriter, r *http.Request) {
 		log.Println(err)
 		w.WriteHeader(http.StatusInternalServerError)
 		json.NewEncoder(w).Encode(responseError{Error: err.Error()})
+		return
 	}
 
 	err = json.Unmarshal(reqBody, &user)
@@ -34,6 +27,7 @@ func Register(w http.ResponseWriter, r *http.Request) {
 		log.Println(err)
 		w.WriteHeader(http.StatusInternalServerError)
 		json.NewEncoder(w).Encode(responseError{Error: err.Error()})
+		return
 	}
 
 	result := db.Create(user)
@@ -42,6 +36,7 @@ func Register(w http.ResponseWriter, r *http.Request) {
 		log.Println(err)
 		w.WriteHeader(http.StatusInternalServerError)
 		json.NewEncoder(w).Encode(responseError{Error: result.Error.Error()})
+		return
 	}
 
 	token, err := createTokenJWT(user.Name, user.Email)
@@ -49,6 +44,7 @@ func Register(w http.ResponseWriter, r *http.Request) {
 		log.Println(err)
 		w.WriteHeader(http.StatusInternalServerError)
 		json.NewEncoder(w).Encode(responseError{Error: err.Error()})
+		return
 	}
 
 	response := responseToken{token}
@@ -67,6 +63,7 @@ func Login(w http.ResponseWriter, r *http.Request) {
 		log.Println(err)
 		w.WriteHeader(http.StatusInternalServerError)
 		json.NewEncoder(w).Encode(responseError{Error: err.Error()})
+		return
 	}
 
 	err = json.Unmarshal(reqBody, &body)
@@ -75,6 +72,7 @@ func Login(w http.ResponseWriter, r *http.Request) {
 		log.Println(err)
 		w.WriteHeader(http.StatusInternalServerError)
 		json.NewEncoder(w).Encode(responseError{Error: err.Error()})
+		return
 	}
 
 	result := db.Take(&user, "email = ?", body.Email)
@@ -83,6 +81,7 @@ func Login(w http.ResponseWriter, r *http.Request) {
 		log.Println(err)
 		w.WriteHeader(http.StatusInternalServerError)
 		json.NewEncoder(w).Encode(responseError{Error: result.Error.Error()})
+		return
 	}
 
 	if body.Password != user.Password {
@@ -96,6 +95,7 @@ func Login(w http.ResponseWriter, r *http.Request) {
 		log.Println(err)
 		w.WriteHeader(http.StatusInternalServerError)
 		json.NewEncoder(w).Encode(responseError{Error: err.Error()})
+		return
 	}
 
 	response := responseToken{token}
