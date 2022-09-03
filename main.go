@@ -7,6 +7,7 @@ import (
 	"ticket-system/routes"
 
 	"github.com/gorilla/mux"
+	"github.com/rs/cors"
 )
 
 func main() {
@@ -17,10 +18,16 @@ func main() {
 
 	router := mux.NewRouter().StrictSlash(true)
 
-  router.Use(mux.CORSMethodMiddleware(router))
+	router.Use(mux.CORSMethodMiddleware(router))
 
 	routes.Routes(router)
 
-  log.Println("initializing server in port 8080")
-	log.Fatal(http.ListenAndServe(":8000", router))
+  c := cors.New(cors.Options{
+    AllowedOrigins: []string{"*"},
+    AllowedMethods: []string{"GET", "POST", "PUT", "DELETE"},
+    AllowedHeaders: []string{"*"},
+  })
+
+	log.Println("initializing server in port 8000")
+	log.Fatal(http.ListenAndServe(":8000", c.Handler(router)))
 }

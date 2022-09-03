@@ -9,6 +9,7 @@ import (
 )
 
 func OpenCall(w http.ResponseWriter, r *http.Request) {
+  w.Header().Set("Content-Type", "application/json")
 	call := &database.Call{}
 
 	reqBody, err := ioutil.ReadAll(r.Body)

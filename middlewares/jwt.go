@@ -27,7 +27,7 @@ func JWT(next http.Handler) http.Handler {
 				return []byte(controllers.Secret), nil
 			})
 
-			if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid { // TODO: verify if this is correctly later but i think that yes
+			if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
 				ctx := context.WithValue(r.Context(), "props", claims)
 				// Access context values in handlers like this
 				// props, _ := r.Context().Value("props").(jwt.MapClaims)
